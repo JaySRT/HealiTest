@@ -1,5 +1,7 @@
 import React from 'react';
 import type {Node} from 'react';
+import file from './database.json';
+
 import {
   SafeAreaView,
   ScrollView,
@@ -9,6 +11,7 @@ import {
   useColorScheme,
   View,
   Image,
+  FlatList,
   TouchableOpacity
 } from 'react-native';
 
@@ -20,78 +23,61 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+const DATA =  Object.entries(file).map(([key, val]) => ({key, ...val}));
+
+//console.log(file)
+const Item = ({ title }) => (
+  <View style={styles.item}>
+    <Text style={styles.itemtitle}>{title}</Text>
+  </View>
+);
+const keyExtractor = (item, index) => index.toString();
+
+const App = () => {
+  const renderItem = ({ item }) => (
+    <Item title={item.text} />
   );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   return (
-    <SafeAreaView style={styles.sectionContainer}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Text numberOfLines={1} onPress={()=> console.log("Text pressed")}>
-                Upload an image here! </Text>
-        <TouchableOpacity onPress={() => alert("Image uploaded")}>
-              <Image
-                source={
-                  require("./assets/icon2.png")
-                }
-              />
-         </TouchableOpacity>
-      </ScrollView>
+    <SafeAreaView style={styles.container}>
+        <Text style={styles.title}> Browse Food </Text>
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+      />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: '#fff',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  itemtitle: {
+  fontFamily: 'Avenir',
+  fontSize: 16,
+  color: '#1F4F46',
+  borderBottomWidth: 2,
+  borderBottomColor: '#E8E8E8',
+  paddingVertical: 20,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  item: {
+    //fontFamily: Avenir,
+    fontSize: 16,
+    color: '#6A6A6A',
+    paddingHorizontal: 20,
+     },
+   title: {
+   fontFamily: 'Avenir Heavy',
+   fontSize: 32,
+   color: '#1F4F46'
+   }
+   }
+);
 
 export default App;
+
+
